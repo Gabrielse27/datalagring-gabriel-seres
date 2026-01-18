@@ -1,29 +1,25 @@
-using Microsoft.EntityFrameworkCore;
-using System;
-using Infrastructure;
 using Application;
 using Domain;
+using Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+// 1. Koppla in Databasen
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-// Registrera våra tjänster
+// 2. Registrera tjänsterna (Dependency Injection)
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<CourseService>();
 
-
-builder.Services.AddControllers();
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// 3. Lägg till Swagger (Dokumentation)
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Konfigurera Swagger
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -31,30 +27,43 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapControllers();
+// ---------------------------------------------------------
+// HÄR ÄR DITT NYA MINIMAL API
+// Vi kopplar adresserna direkt till CourseService
+// ---------------------------------------------------------
 
-var summaries = new[]
+// Hämta alla kurser
+app.MapGet("/api/courses", async (CourseService service) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    return await service.GetAllCourses();
+});
 
-app.MapGet("/weatherforecast", () =>
+// Hämta en specifik kurs
+app.MapGet("/api/courses/{id}", async (int id, CourseService service) =>
 {
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    var course = await service.GetCourseById(id);
+    return course is not null ? Results.Ok(course) : Results.NotFound();
+});
+
+// Skapa en ny kurs
+app.MapPost("/api/courses", async (Course course, CourseService service) =>
+{
+    await service.AddCourse(course);
+    return Results.Ok("Kursen skapad!");
+});
+
+// Uppdatera en kurs
+app.MapPut("/api/courses", async (Course course, CourseService service) =>
+{
+    await service.UpdateCourse(course);
+    return Results.Ok("Kursen uppdaterad!");
+});
+
+// Ta bort en kurs
+app.MapDelete("/api/courses/{id}", async (int id, CourseService service) =>
+{
+    await service.DeleteCourse(id);
+    return Results.Ok("Kursen borttagen!");
+});
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
