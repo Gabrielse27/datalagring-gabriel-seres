@@ -15,14 +15,15 @@ builder.Services.AddScoped<CourseService>();
 
 // 3. Lägg till Swagger (Dokumentation)
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen();                   //AddOpenApi();
 
 var app = builder.Build();
 
 // Konfigurera Swagger
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();                         //app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
