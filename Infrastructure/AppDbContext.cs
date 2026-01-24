@@ -15,6 +15,8 @@ namespace Infrastructure
         }
 
         // Här listar vi alla tabeller som ska finnas i databasen
+
+        public DbSet<Student> Students { get; set; }
         public DbSet<Course> Courses { get; set; }
 
     }
