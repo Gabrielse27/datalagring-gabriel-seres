@@ -30,5 +30,15 @@ namespace Infrastructure
             await _context.SaveChangesAsync();
 
         }
+
+        public async Task <List<Student>>GetStudentBySqlAsync(string searchName)
+        {
+            var result = await _context.Students
+                .FromSqlRaw("SELECT * FROM Students WHERE FirstName LIKE {0} OR LastName LIKE {0}", "%" + searchName + "%")
+                .ToListAsync();
+                return result;
+
+        }  
+        
     }
 }

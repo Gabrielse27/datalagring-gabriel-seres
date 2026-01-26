@@ -49,5 +49,10 @@ namespace Application
             // så att den nya studenten syns nästa gång vi hämtar listan.
             _cache.Remove("studentsList");
         }
+
+        public async Task<List<Student>> SearchStudents(string searchName)
+        {
+            return await _repository.GetStudentBySqlAsync(searchName);
+        }
     }
 }

@@ -87,6 +87,17 @@ app.MapGet("/api/courses/{id}", async (int id, CourseService service) =>
     return course is not null ? Results.Ok(course) : Results.NotFound();
 });
 
+// VG-Endpoint: Sök med SQL
+// URL blir t.ex: /api/students/search?name=Gabriel
+app.MapGet("/api/students/search", async (Application.StudentService service, string name) =>
+{
+    var result = await service.SearchStudents(name);
+    // Om vi hittar några studenter -> Returnera dem (200 OK)
+    // Om listan är tom -> Returnera "Hittades inte" (404 Not Found)
+    return result.Any() ? Results.Ok(result) : Results.NotFound("Inga studenter hittades med det namnet.");
+});
+
+
 // Skapa en ny kurs
 app.MapPost("/api/courses", async (Course course, CourseService service) =>
 {
