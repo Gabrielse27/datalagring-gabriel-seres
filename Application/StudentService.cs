@@ -54,5 +54,11 @@ namespace Application
         {
             return await _repository.GetStudentBySqlAsync(searchName);
         }
+
+        public async Task UpdateStudentName (int id , string firstName , string lastName)
+        {
+            await _repository.UpdateStudentNameAsync(id, firstName, lastName);
+        }
+
     }
 }

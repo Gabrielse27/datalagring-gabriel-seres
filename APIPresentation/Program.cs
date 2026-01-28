@@ -97,6 +97,21 @@ app.MapGet("/api/students/search", async (Application.StudentService service, st
     return result.Any() ? Results.Ok(result) : Results.NotFound("Inga studenter hittades med det namnet.");
 });
 
+// VG-Endpoint: Uppdatera namn (Använder transaktion)
+
+app.MapPut("/api/students/{id}/name", async (Application.StudentService service, int id, string firstName, string lastName) =>
+{
+    try
+    {
+        await service.UpdateStudentName(id, firstName, lastName);
+        return Results.Ok("Uppdateringen lyckades! (Transaktionen committad)");
+    }
+    catch (Exception)
+    {
+        return Results.Problem("Något gick fel. Transaktionen har gjorts Rollback på.");
+    }
+});
+
 
 // Skapa en ny kurs
 app.MapPost("/api/courses", async (Course course, CourseService service) =>
@@ -118,5 +133,8 @@ app.MapDelete("/api/courses/{id}", async (int id, CourseService service) =>
     await service.DeleteCourse(id);
     return Results.Ok("Kursen borttagen!");
 });
+
+
+
 
 app.Run();

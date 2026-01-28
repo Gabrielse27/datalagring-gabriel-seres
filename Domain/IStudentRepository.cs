@@ -14,5 +14,7 @@ namespace Domain
         Task AddStudentAsync(Student student);
 
         Task<List<Student>> GetStudentBySqlAsync(string searchName);
+
+        Task UpdateStudentNameAsync(int id, string firstName, string lastName);
     }
 }

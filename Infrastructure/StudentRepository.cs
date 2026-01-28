@@ -38,7 +38,43 @@ namespace Infrastructure
                 .ToListAsync();
                 return result;
 
-        }  
-        
+        }
+
+        // VG-KRAV: Transaktionshantering med Rollback
+        public async Task UpdateStudentNameAsync(int id, string firstName, string lastName)
+        {
+            // 1. Starta en transaktion (Allt eller inget!)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                // Leta upp studenten
+                var student = await _context.Students.FindAsync(id);
+
+                if (student != null)
+                {
+                    // Gör ändringen
+                    student.FirstName = firstName;
+                    student.Lastname = lastName;
+
+                    // Spara ändringen i minnet (men transaktionen är fortfarande öppen)
+                    await _context.SaveChangesAsync();
+
+                    // 2. Allt gick bra? -> COMMIT (Lås fast ändringarna permanent)
+                    await transaction.CommitAsync();
+                }
+            }
+            catch (Exception)
+            {
+                // 3. Något gick fel? -> ROLLBACK (Ångra exakt allt som gjordes)
+                await transaction.RollbackAsync();
+
+                // Kasta felet vidare
+                throw;
+            }
+        }
+
+
+
     }
 }
