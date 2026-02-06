@@ -28,7 +28,7 @@ The solution is structured according to Domain-Driven Design (DDD) and Clean Arc
 * Framework: .NET 10 (ASP.NET Core)
 * Database: SQL Servee via  Entity Framework Core
 * Testing: xUnit, Moq
-* Tools: Swagger (OpenAPI) for documentation
+* Tools: Swagger ,  Postman , for Api Testing. 
 * Sql Server Object Explorer   (dbo.Courses) (dbo.Students)
 
 
