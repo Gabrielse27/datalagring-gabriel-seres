@@ -20,7 +20,7 @@ namespace Infrastructure
             _context.Courses.Add(course);
             await _context.SaveChangesAsync();
         }
-        // Ta bort en kuts
+        // Ta bort en kurs
         public async Task DeleteCourse(int id)
         {
             var courseToDelete = await _context.Courses.FindAsync(id);

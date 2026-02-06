@@ -2,6 +2,7 @@ using Application;
 using Domain;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,14 +43,17 @@ var app = builder.Build();
 
 // --- SKAPA ENDPOINTS HÄR ---
 
-// Endpoint för att hämta alla studenter (Använder din Service med Caching!)
+ //Endpoint för att hämta alla studenter (Använder din Service med Caching!)
+
 app.MapGet("/api/students", async (Application.StudentService service) =>
 {
-    var students = await service.GetAllStudents();
-    return Results.Ok(students);
+  var students = await service.GetAllStudents();
+return Results.Ok(students);
 });
 
 // Endpoint för att lägga till en student
+
+
 app.MapPost("/api/students", async (Application.StudentService service, Domain.Student student) =>
 {
     await service.AddStudent(student);
@@ -97,7 +101,7 @@ app.MapGet("/api/students/search", async (Application.StudentService service, st
     return result.Any() ? Results.Ok(result) : Results.NotFound("Inga studenter hittades med det namnet.");
 });
 
-// VG-Endpoint: Uppdatera namn (Använder transaktion)
+// Endpoint: Uppdatera namn (Använder transaktion)
 
 app.MapPut("/api/students/{id}/name", async (Application.StudentService service, int id, string firstName, string lastName) =>
 {
@@ -127,6 +131,8 @@ app.MapPut("/api/courses", async (Course course, CourseService service) =>
     return Results.Ok("Kursen uppdaterad!");
 });
 
+
+
 // Ta bort en kurs
 app.MapDelete("/api/courses/{id}", async (int id, CourseService service) =>
 {
@@ -134,6 +140,25 @@ app.MapDelete("/api/courses/{id}", async (int id, CourseService service) =>
     return Results.Ok("Kursen borttagen!");
 });
 
+ //---Endpoint för att uppdatera hela studentobjektet
+
+app.MapPut("/api/students/{id}", async (int id, Domain.Student student, Application.StudentService service) =>
+{
+    await service.UpdateStudent (student);
+    return Results.Ok("Studenten Updaterad!");
+});
+
+app.MapDelete("/api/students/{id}", async (int id, IStudentRepository repo) =>
+{
+    // Vi försöker ta bort studenten
+    var success = await repo.DeleteStudentAsync(id);
+
+    if (success)
+    {
+        return Results.Ok("Studenten borttagen");
+    }
+    return Results.NotFound("Kunde inte hitta studenten");
+});
 
 
 

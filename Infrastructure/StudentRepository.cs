@@ -24,6 +24,24 @@ namespace Infrastructure
             return await _context.Students.ToListAsync();
         }
 
+
+        public async Task<bool> DeleteStudentAsync(int id)
+        {
+            var student = await _context.Students.FindAsync(id);
+
+            if (student == null)
+            {
+                return false; // Hittades inte -> Returnera False
+            }
+
+            _context.Students.Remove(student);
+            await _context.SaveChangesAsync();
+            return true; // Borttagen -> Returnera True
+        }
+
+
+
+
         public async Task AddStudentAsync(Student student)
         {
             _context.Students.Add(student);
@@ -33,7 +51,9 @@ namespace Infrastructure
 
         public async Task <List<Student>>GetStudentBySqlAsync(string searchName)
         {
+         // Entity Framework Core används
             var result = await _context.Students
+                // Använder Rå SQL-fråga för att hämta studenter baserat på sökord
                 .FromSqlRaw("SELECT * FROM Students WHERE FirstName LIKE {0} OR LastName LIKE {0}", "%" + searchName + "%")
                 .ToListAsync();
                 return result;
@@ -74,7 +94,7 @@ namespace Infrastructure
             }
         }
 
-
+        
 
     }
 }
