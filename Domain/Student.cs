@@ -13,6 +13,8 @@ namespace Domain
 
         public string Email { get; set; }
 
+        public int Age { get; set; }
 
+        public List<Enrollment> Enrollments { get; set; } = new();
     }
 }

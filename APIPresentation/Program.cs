@@ -19,6 +19,11 @@ builder.Services.AddScoped<CourseService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
+{
+    options.SerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+});
+
 builder.Services.AddMemoryCache();
 
 builder.Services.AddScoped<Domain.IStudentRepository, Infrastructure.StudentRepository>();
@@ -159,6 +164,23 @@ app.MapDelete("/api/students/{id}", async (int id, IStudentRepository repo) =>
     }
     return Results.NotFound("Kunde inte hitta studenten");
 });
+
+app.MapPost("api/enrollments", async (Infrastructure.AppDbContext db, int studentId, int courseId) =>
+{
+    // Skapa kopplingen 
+    var enrollment = new Domain.Enrollment
+    {
+        StudentId = studentId,
+        CourseId = courseId
+    };
+    // Spara i databasen
+    db.Set<Domain.Enrollment>().Add(enrollment);
+    await db.SaveChangesAsync();
+
+    return Results.Ok($"Student{studentId} är nu registerat på kurs{courseId}");
+
+});
+
 
 
 
