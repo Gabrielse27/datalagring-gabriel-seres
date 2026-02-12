@@ -13,5 +13,7 @@ namespace Domain
         public string Teacher { get; set; }
 
         public decimal Price { get; set; }
+
+        public List<Enrollment> Enrollments { get; set; } = new();
     }
 }

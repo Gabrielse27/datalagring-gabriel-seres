@@ -21,7 +21,9 @@ namespace Infrastructure
         public async Task<List<Student>> GetAllStudentsAsync()
         {
             // Hämtar listan från databasen
-            return await _context.Students.ToListAsync();
+            return await _context.Students
+                .Include(s => s.Enrollments)
+                .ToListAsync();
         }
 
 
@@ -55,6 +57,7 @@ namespace Infrastructure
             var result = await _context.Students
                 // Använder Rå SQL-fråga för att hämta studenter baserat på sökord
                 .FromSqlRaw("SELECT * FROM Students WHERE FirstName LIKE {0} OR LastName LIKE {0}", "%" + searchName + "%")
+                .Include(s => s.Enrollments)
                 .ToListAsync();
                 return result;
 
