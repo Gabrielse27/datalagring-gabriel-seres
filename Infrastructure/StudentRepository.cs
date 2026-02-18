@@ -23,6 +23,7 @@ namespace Infrastructure
             // Hämtar listan från databasen
             return await _context.Students
                 .Include(s => s.Enrollments)
+                .ThenInclude(e => e.Course)
                 .ToListAsync();
         }
 
@@ -46,6 +47,8 @@ namespace Infrastructure
 
         public async Task AddStudentAsync(Student student)
         {
+
+            student.Id = 0; // Säkerställ att Id är 0 så att EF Core genererar ett nytt Id
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
 
@@ -64,7 +67,7 @@ namespace Infrastructure
         }
 
         // VG-KRAV: Transaktionshantering med Rollback
-        public async Task UpdateStudentNameAsync(int id, string firstName, string lastName)
+        public async Task UpdateStudentAsync(int id, string firstName, string lastName, int age)
         {
             // 1. Starta en transaktion (Allt eller inget!)
             using var transaction = await _context.Database.BeginTransactionAsync();
@@ -78,8 +81,8 @@ namespace Infrastructure
                 {
                     // Gör ändringen
                     student.FirstName = firstName;
-                    student.Lastname = lastName;
-
+                    student.LastName = lastName;
+                    student.Age = age;
                     // Spara ändringen i minnet (men transaktionen är fortfarande öppen)
                     await _context.SaveChangesAsync();
 

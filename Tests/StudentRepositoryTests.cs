@@ -27,7 +27,7 @@ namespace Tests
             var newStudent = new Student
             {
                 FirstName = "Test",
-                Lastname = "Integration",
+                LastName = "Integration",
                 Email = "test@test.com"
             };
 

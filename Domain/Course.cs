@@ -14,6 +14,8 @@ namespace Domain
 
         public decimal Price { get; set; }
 
+        public string Location { get; set; } = "Distans";
+
         public List<Enrollment> Enrollments { get; set; } = new();
     }
 }

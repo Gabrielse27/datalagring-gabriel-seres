@@ -15,7 +15,7 @@ namespace Domain
 
         Task<List<Student>> GetStudentBySqlAsync(string searchName);
 
-        Task UpdateStudentNameAsync(int id, string firstName, string lastName);
+        Task UpdateStudentAsync(int id, string firstName, string lastName, int age);
 
         Task<bool> DeleteStudentAsync(int id);
     }

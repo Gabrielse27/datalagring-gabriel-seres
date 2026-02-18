@@ -13,6 +13,6 @@ namespace Domain
         public int CourseId { get; set; }
         public Course Course { get; set; }
 
-
+        public DateTime EnrollmentDate { get; set; } = DateTime.Now;
     }
 }

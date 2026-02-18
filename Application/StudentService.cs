@@ -36,12 +36,18 @@ namespace Application
                 {
                     Id = s.Id,
                     FirstName = s.FirstName,
-                    LastName = s.Lastname
+                    LastName = s.LastName,
+                    Age = s.Age,
+                    Courses = s.Enrollments.Select(e => 
+                           string.IsNullOrWhiteSpace(e.Course.Location)
+                           ? e.Course.Title
+                           : e.Course.Title + "("+ e.Course.Location +")"
+                           ).ToList(),
                 }).ToList();
 
                 // 3. Spara listan i minnet i 2 minuter
                 var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(2));
+                    .SetSlidingExpiration(TimeSpan.FromSeconds(5));
 
                 _cache.Set(cacheKey, studentsDto, cacheOptions);
             }
@@ -89,9 +95,9 @@ namespace Application
             return await _repository.GetStudentBySqlAsync(searchName);
         }
 
-        public async Task UpdateStudentName (int id , string firstName , string lastName)
+        public async Task UpdateStudentInfo (int id , string firstName , string lastName, int age)
         {
-            await _repository.UpdateStudentNameAsync(id, firstName, lastName);
+            await _repository.UpdateStudentAsync(id, firstName, lastName, age);
         }
 
 
@@ -99,10 +105,20 @@ namespace Application
         {
             // Logik för att uppdatera i databasen via repot
             // T.ex: await _studentRepository.UpdateStudentAsync(student);
+
+
+            // 1. Skicka datan vidare till databasen (nu med Age!)
+            await _repository.UpdateStudentAsync(student.Id, student.FirstName, student.LastName, student.Age);
+
+            // 2. VIKTIGT: Rensa cachen så att Swagger visar rätt nästa gång vi hämtar listan
+            _cache.Remove("studentsListDto");
         }
 
         public async Task<bool> DeleteStudentAsync(int id)
         {
+
+            _cache.Remove("studentsListDto");
+
             // Ropa på repositoryt som gör jobbet
             return await _repository.DeleteStudentAsync(id);
         }
