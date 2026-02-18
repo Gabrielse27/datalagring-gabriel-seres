@@ -13,7 +13,8 @@ namespace Application
 
         public string LastName { get; set; }
 
-        
-        
+        public int Age { get; set; }
+
+        public List<string> Courses { get; set; } = new List<string>();
     }
 }

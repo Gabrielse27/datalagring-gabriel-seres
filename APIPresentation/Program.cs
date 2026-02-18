@@ -79,7 +79,7 @@ app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 
 // ---------------------------------------------------------
-// HÄR ÄR DITT NYA MINIMAL API
+// HÄR ÄR MINIMAL API
 // Vi kopplar adresserna direkt till CourseService
 // ---------------------------------------------------------
 
@@ -108,11 +108,11 @@ app.MapGet("/api/students/search", async (Application.StudentService service, st
 
 // Endpoint: Uppdatera namn (Använder transaktion)
 
-app.MapPut("/api/students/{id}/name", async (Application.StudentService service, int id, string firstName, string lastName) =>
+app.MapPut("/api/students/{id}/name", async (Application.StudentService service, int id, string firstName, string lastName, int age) =>
 {
     try
     {
-        await service.UpdateStudentName(id, firstName, lastName);
+        await service.UpdateStudentInfo(id, firstName, lastName, age);
         return Results.Ok("Uppdateringen lyckades! (Transaktionen committad)");
     }
     catch (Exception)
