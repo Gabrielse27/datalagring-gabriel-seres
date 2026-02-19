@@ -40,8 +40,17 @@ namespace Application
                     Age = s.Age,
                     Courses = s.Enrollments.Select(e => 
                            string.IsNullOrWhiteSpace(e.Course.Location)
-                           ? e.Course.Title
-                           : e.Course.Title + "("+ e.Course.Location +")"
+
+                           ? $"{e.Course.Title} - Reg: {e.EnrollmentDate.ToString("yyyy-MM-dd")}"
+    : $"{e.Course.Title}({e.Course.Location}) - Reg: {e.EnrollmentDate.ToString("yyyy-MM-dd")}"
+
+
+
+
+
+
+                           //? e.Course.Title
+                           //: e.Course.Title + "("+ e.Course.Location +")"
                            ).ToList(),
                 }).ToList();
 
