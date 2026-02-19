@@ -21,7 +21,7 @@ The solution is structured according to Domain-Driven Design (DDD) and Clean Arc
 * Transaction Management :
     * Implements secure transaction handling.
     * Rollback support: If an error occurs during name updates, the database rolls back changes to ensure data integrity.
-* Testing: Includes Tests for CourseService and StudentRepository
+* Testing: Includes Tests for CourseService , StudentRepository and StudentService.
 
 ##  Technologies
 
